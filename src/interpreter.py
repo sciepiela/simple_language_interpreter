@@ -4,7 +4,7 @@ token_type = {
     # Operatory matematyczne
     '+': 'PLUS', '-': 'MINUS', '*': 'STAR', '/': 'SLASH', '=': 'EQUAL',
     # poniżej inne znaczki
-    '.': 'DOT', ',': 'COMMA', ':': 'SEMICOLON', '(': 'LPAREN', ')': 'RPAREN', '{': 'LBRACE', '}': 'RBRACE',
+    '.': 'DOT', ',': 'COMMA', ';': 'SEMICOLON', '(': 'LPAREN', ')': 'RPAREN', '{': 'LBRACE', '}': 'RBRACE',
     # logiczne
     '==': 'DEQUAL', '<=': 'LEQUAL', '>=': 'GEQUAL', '<': 'LESS', '>': 'GREATER', '&': 'AND', '|': 'OR', '!': 'NOT',
 }
@@ -77,4 +77,5 @@ def main():
     interpreter = Interpreter()
     interpreter.run_self()
 
-main()
+if __name__ == "__main__":
+    main()
