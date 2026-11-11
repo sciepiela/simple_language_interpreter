@@ -46,7 +46,7 @@ jobs:
         python -m pytest
 
   deploy:
-    needs: build          # Wykona się TYLKO wtedy, gdy job 'build' zakończy się sukcesem
+    needs: build      
     runs-on: ubuntu-latest
 
     steps:
