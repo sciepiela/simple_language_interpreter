@@ -6,6 +6,8 @@ name: Python application
 on:
   push:
     branches: [ "master" ]
+    tags: 
+      - v.0.*
   pull_request:
     branches: [ "master" ]
 
@@ -39,3 +41,14 @@ jobs:
         PYTHONPATH: .
       run: |
         python -m pytest
+
+    - name: Create project archive
+      run: |
+
+        zip -r simple_language_interpreter.zip . -x "*.git*" -x "__pycache__/*" -x ".pytest_cache/*" -x "venv/*" -x ".venv/*"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: simple_language_interpreter
+        path: simple_language_interpreter.zip
