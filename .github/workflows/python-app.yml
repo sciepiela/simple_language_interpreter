@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest build
+          pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Lint with flake8
@@ -40,16 +40,6 @@ jobs:
         run: |
           python -m pytest
 
-      - name: Build package
-        run: |
-          python -m build
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
-
   release:
     needs: build-and-test
     if: startsWith(github.ref, 'refs/tags/v')
@@ -58,18 +48,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
+      - name: Package source code
+        run: |
+          mkdir -p dist
+          tar -czvf dist/simple_language_interpreter-${{ github.ref_name }}.tar.gz --exclude='.git' --exclude='.github' --exclude='dist' .
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: |
-            dist/*.whl
-            dist/*.tar.gz
+          files: dist/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
