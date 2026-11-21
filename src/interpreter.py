@@ -1,12 +1,13 @@
-symbols = [' ', '(', ')', '{', '}', ';', '\n', '\t']
+symbols = [' ', '(', ')', '{', '}', ';', '\n', '\t', ]
+two_char_ops = ['==', '!=', '<=', '>='] # to zostanie wykorzystane do naprawienia błdów powodowanych przez wyrażenia typu "a==b" (bez spacji)
 keywords = ['var', 'logic', 'if', 'while', 'true', 'false']
 token_type = {
     # Operatory matematyczne
     '+': 'PLUS', '-': 'MINUS', '*': 'STAR', '/': 'SLASH', '=': 'EQUAL',
     # poniżej inne znaczki
-    '.': 'DOT', ',': 'COMMA', ';': 'SEMICOLON', '(': 'LPAREN', ')': 'RPAREN', '{': 'LBRACE', '}': 'RBRACE',
+    ';': 'SEMICOLON', '(': 'LPAREN', ')': 'RPAREN', '{': 'LBRACE', '}': 'RBRACE',
     # logiczne
-    '==': 'DEQUAL', '<=': 'LEQUAL', '>=': 'GEQUAL', '<': 'LESS', '>': 'GREATER', '&': 'AND', '|': 'OR', '!': 'NOT',
+    '==': 'DEQUAL', '!=': 'NEQUAL', '<=': 'LEQUAL', '>=': 'GEQUAL', '<': 'LESS', '>': 'GREATER', '&': 'AND', '|': 'OR', '!': 'NOT',
 }
 """
 Interpreter jest na wczesnym etapie rozwoju, możliwe że w przyszłości część metod trafi do oddzielnych klas
@@ -19,7 +20,7 @@ class Interpreter:
         self.had_error = False
         self.source_code = ""
         self.lexemes = []
-
+        self.tokens = []
 
     def run_self (self):
         """Metoda wykonująca główną pętlę programu (na ten moment obsługa wprowadzania przez terminal)"""
@@ -27,15 +28,20 @@ class Interpreter:
         while self.input_line != "quit;":
             self.prompt()
 
+
             if self.input_line == "run;":
                 self.scanner()
                 self.tokenizer()
+                self.expr_divider()
                 print(self.tokens)
+                self.source_code = ""
+                self.lexemes = []
+                self.tokens = []
+            else:
+                self.source_code += self.input_line
 
-            self.source_code += self.input_line
             if self.had_error:
                 self.throw_error()
-
 
     def prompt (self):
         """Metoda wczytująca dane z terminala, możliwe że zostanie usunięta"""
@@ -46,13 +52,18 @@ class Interpreter:
         pass
 
     def scanner(self):
-        """Metoda skanująca źródło i dzieląca go na jednoski znaczeniowe (bez klasyfikacji)"""
+        """
+        Metoda skanująca źródło i dzieląca go na jednoski znaczeniowe (bez klasyfikacji)
+
+        UWAGA: wpisanie "a==b" spowoduje niepoprawne działanie; tj. wczytanie tego jako jeden lexem
+        (a później rozpoznanie jako identyfikator)
+        """
         self.lexemes = []
         lexeme = ""
         for i, char in enumerate(self.source_code): # enumaerate jest po to aby można było spojżeć naprzód w source_code
 
             if char not in symbols:
-                lexeme += char # wczytujemy znaki do: momentu natrafienia na symbol
+                lexeme += char # wczytujemy znaki do momentu natrafienia na symbol
 
                 if i + 1 < len(self.source_code): 
                     next_char = self.source_code[i + 1] # zaglądamy krok dalej
@@ -75,15 +86,34 @@ class Interpreter:
                 continue
             if lexem in keywords:
                 t_type = lexem.upper()
-            elif lexem in token_type:
-                t_type = token_type[lexem]
-            elif lexem.isdigit():
+            elif lexem in token_type:       # Uwaga! Niestety ale kiedy wklepiemy np. "12ewewd" 
+                t_type = token_type[lexem]  # to będzie to zapisane jako 'NUMBER'
+            elif lexem[0].isdigit():        # także o ile narazie jest ok, to jeszcze trzeba to poprawić
                 t_type = 'NUMBER'
             else:
                 t_type = 'IDENTIFIER'
                 
             self.tokens.append((t_type, lexem))
 
+    def expr_divider(self):
+        lines = []
+        line = []
+        for token in self.tokens:
+            if token[0] != 'SEMICOLON': # Jeśli skończą nam się tokeny i nie ma tak ";" powinien wypadać błąd
+                line.append(token)
+            else:
+                lines.append(line)
+                line = []
+
+        self.tokens = lines
+
+    def test_self(self, line):
+        """Metoda stworzona na potrzeby testów"""
+        self.source_code = line
+        self.scanner()
+        self.tokenizer()
+        self.expr_divider()
+        return self.tokens
 
 def main():
     interpreter = Interpreter()

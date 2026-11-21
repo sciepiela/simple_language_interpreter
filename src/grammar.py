@@ -7,19 +7,20 @@ from abc import ABC
 from typing import NamedTuple
 
 class Expression(ABC):
-    def __intit__(self, *args, **kwargs):
-        pass
+    def __init__(self, *args, **kwargs):
+        super().__init__()
     def evaluate(self):
         pass
 
 class Literal(Expression): # to mogłoby trzymać zarówno wartość jak i typ i rzucać TypeError
-    def __intit__(self, value, type): # nie wiem ok?
-        pass
+    def __init__(self, value, type): # nie wiem ok?
+        super().__init__()
     def evaluate(self):
         pass
 
 class Unary(Expression):
-    def __intit__(self, operator : tuple[str, str], expr):
+    def __init__(self, operator : tuple[str, str], expr : Expression):
+        super().__init__()
         self.operator = operator
         self.expr = expr
     def evaluate(self):
@@ -30,8 +31,9 @@ class Unary(Expression):
                 pass
 
 class Binary(Expression):
-    def __intit__(self, operator : tuple[str, str], expr1 : Expression, expr2 : Expression): 
+    def __init__(self, expr1 : Expression, operator : tuple[str, str], expr2 : Expression): 
     # zastanów się nad typem operatora
+        super().__init__()
         self.operator = operator
         self.left_expr = expr1
         self.rigth_expre = expr2
@@ -48,14 +50,8 @@ class Binary(Expression):
                 pass
             case "EQUAL":
                 pass
-            case "DOT": # w zasadzie to po co traktować kropki jako odddzielne tokeny????
-                pass    # co zrobisz z float'ami?
-            case "COMMA":
-                pass
-            case "SEMICOLON": # nad tym to się lepiej zastanów
-                pass          # W tym sensie czy wogóle jest sens tokenizować średniki jeśli
-                              # można ich używać jako punktów które dzielą linijki kodu które 
-                              # mogą być przechowywane jako listy tokenów w liście tokens.
+            case "SEMICOLON":
+                pass          
             case "LPAREN":    
                 pass
             case "RPAREN":
@@ -80,7 +76,8 @@ class Binary(Expression):
                 pass
 
 class Grouping(Expression):
-    def __intit__(self, expr):
+    def __init__(self, expr):
+        super().__init__()
         self.expression = expr
     def evaluate(self):
         pass

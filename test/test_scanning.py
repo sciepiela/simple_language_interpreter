@@ -7,19 +7,10 @@ def test_tokenizer_variable_declaration():
     
     interpreter.scanner()
     interpreter.tokenizer()
+
     
-    expected_tokens = [
-        ('VAR', 'var'),
-        ('IDENTIFIER', 'x'),
-        ('EQUAL', '='),
-        ('NUMBER', '10'),
-        ('MINUS', '-'),
-        ('LPAREN','('),
-        ('NUMBER', '2'),
-        ('STAR', '*'),
-        ('NUMBER', '3'),
-        ('RPAREN', ')'),
-        ('SEMICOLON', ';')
-    ]
+    expected_tokens = [ ('VAR', 'var'), ('IDENTIFIER', 'x'), ('EQUAL', '='), ('NUMBER', '10'),
+        ('MINUS', '-'), ('LPAREN','('), ('NUMBER', '2'), ('STAR', '*'), ('NUMBER', '3'),
+        ('RPAREN', ')'), ('SEMICOLON',';')]
     
     assert interpreter.tokens == expected_tokens
