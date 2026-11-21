@@ -32,7 +32,6 @@ class Interpreter:
             if self.input_line == "run;":
                 self.scanner()
                 self.tokenizer()
-                self.expr_divider()
                 print(self.tokens)
                 self.source_code = ""
                 self.lexemes = []
@@ -95,24 +94,11 @@ class Interpreter:
                 
             self.tokens.append((t_type, lexem))
 
-    def expr_divider(self):
-        lines = []
-        line = []
-        for token in self.tokens:
-            if token[0] != 'SEMICOLON': # Jeśli skończą nam się tokeny i nie ma tak ";" powinien wypadać błąd
-                line.append(token)
-            else:
-                lines.append(line)
-                line = []
-
-        self.tokens = lines
-
     def test_self(self, line):
         """Metoda stworzona na potrzeby testów"""
         self.source_code = line
         self.scanner()
         self.tokenizer()
-        self.expr_divider()
         return self.tokens
 
 def main():
