@@ -27,9 +27,7 @@ class Parser:
         return expr
 
     def logic(self):
-        return self.parse_binary(
-            self.arithm, ["DEQUAL", "NEQUAL", "LEQUAL", "GEQUAL", "LESS", "GREATER"]
-        )
+        return self.parse_binary(self.arithm, ["DEQUAL", "NEQUAL", "LEQUAL", "GEQUAL", "LESS", "GREATER"])
 
     def arithm(self):
         return self.parse_binary(self.term, ["PLUS", "MINUS"])
@@ -49,3 +47,17 @@ class Parser:
         value = self.tokens[self.current][1]
         self.advance()
         return Literal(value)
+
+    def print_ast(self, node: Expression, indent: str = "") -> None:
+        """Napisane przez AI - na potrzeby testów"""
+        if isinstance(node, Literal):
+            print(f"{indent}Literal({node.value!r})")
+        elif isinstance(node, Unary):
+            op_type, op_lexeme = node.operator
+            print(f"{indent}Unary({op_type}: {op_lexeme!r})")
+            self.print_ast(node.expr, indent + "  ")
+        elif isinstance(node, Binary):
+            op_type, op_lexeme = node.operator
+            print(f"{indent}Binary({op_type}: {op_lexeme!r})")
+            self.print_ast(node.left_expr, indent + "  ")
+            self.print_ast(node.rigth_expr, indent + "  ")
